@@ -8,9 +8,9 @@ router.get('/', async (req, res) => {
         let postPerPage = 10
         let page = req.query.page || 1
         const pagePosts = await Post.aggregate([{ $sort: { createdAt: -1 } }])
-        .skip(postPerPage * page - postPerPage)
-        .limit(postPerPage)
-        .exec()
+            .skip(postPerPage * page - postPerPage)
+            .limit(postPerPage)
+            .exec()
         const count = await Post.count()
         const nextPage = parseInt(page) + 1
         const hasNextPage = nextPage <= (count / postPerPage)
@@ -23,13 +23,15 @@ router.get('/', async (req, res) => {
         console.log('error', error)
     }
 })
-router.get('/about', (req, res) => {
-    const data = {
-        name: 'John Doe',
-        age: 30,
-        address: '123 Main St'
+router.get('/post/:id', async (req, res) => {
+    try {
+        let postId = req.params.id
+        const result = await Post.findById({ _id: postId })
+        res.render('post', { post:result })
+    } catch (error) {
+
     }
-    res.render('about', { data })
+
 })
 
 function insertPostData() {
